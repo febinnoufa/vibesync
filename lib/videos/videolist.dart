@@ -9,6 +9,7 @@ import 'package:vibesync/videos/dbfunctions/favfunc.dart';
 import 'package:vibesync/videos/dbfunctions/recentlyfunc.dart';
 import 'package:vibesync/videos/flick.dart';
 import 'package:vibesync/videos/playlistaddlist.dart';
+import 'package:vibesync/videos/testingvideoplayer.dart';
 
 class Videolist extends StatefulWidget {
   const Videolist({super.key});
@@ -23,7 +24,7 @@ class VideoListState extends State<Videolist> {
   @override
   void initState() {
     super.initState();
-    
+
     openRecentlyPlayedBox();
   }
 
@@ -89,30 +90,29 @@ class VideoListState extends State<Videolist> {
                                     ),
                                   );
                                 } else {
-                                  return
-                                  
-                           Container(
-  width: 100,
-  height: 100,
-  decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(15), // Change the radius value as needed
-    border: Border.all(
-      color: Colors.black, // Border color
-      width: 2, // Border width
-    ),
-  ),
-  child: ClipRRect(
-    borderRadius: BorderRadius.circular(15), // Ensure this value matches the container's border radius
-    child: Image.network(
-      'https://i.pinimg.com/236x/4f/d7/6d/4fd76d56dae62a30deecced88bee0567.jpg',
-      width: 100,
-      height: 100,
-      fit: BoxFit.cover, // This ensures the image fills the container without distortion
-    ),
-  ),
-);
-
-
+                                  return Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                          15), // Change the radius value as needed
+                                      border: Border.all(
+                                        color: Colors.black, // Border color
+                                        width: 2, // Border width
+                                      ),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(
+                                          15), // Ensure this value matches the container's border radius
+                                      child: Image.network(
+                                        'https://i.pinimg.com/236x/4f/d7/6d/4fd76d56dae62a30deecced88bee0567.jpg',
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit
+                                            .cover, // This ensures the image fills the container without distortion
+                                      ),
+                                    ),
+                                  );
                                 }
                               },
                             ),
@@ -133,8 +133,8 @@ class VideoListState extends State<Videolist> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                VideoPlayer_Page(
-                                                    videoUrl: video.name),
+                                                VideoPlayerPage(
+                                                    videoPath: video.name),
                                           ),
                                         );
                                       }
@@ -180,7 +180,7 @@ class VideoListState extends State<Videolist> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        VideoPlayer_Page(videoUrl: video.name),
+                                        VideoPlayerPage(videoPath: video.name),
                                   ),
                                 );
                               }

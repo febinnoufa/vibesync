@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flick_video_player/flick_video_player.dart';
+//import 'package:flick_video_player/flick_video_player.dart';
 import 'package:video_player/video_player.dart';
 
 // ignore: camel_case_types
@@ -14,20 +14,20 @@ class VideoPlayer_Page extends StatefulWidget {
 }
 
 class _VideoPlayerPageState extends State<VideoPlayer_Page> {
-  late FlickManager flickManager;
+  //late FlickManager flickManager;
 
   @override
   void initState() {
     super.initState();
-    flickManager = FlickManager(
-      // ignore: deprecated_member_use
-      videoPlayerController: VideoPlayerController.network(widget.videoUrl),
-    );
+    // flickManager = FlickManager(
+    //   // ignore: deprecated_member_use
+    //   videoPlayerController: VideoPlayerController.network(widget.videoUrl),
+    // );
   }
 
   @override
   void dispose() {
-    flickManager.dispose();
+    //flickManager.dispose();
     super.dispose();
   }
 
@@ -50,11 +50,11 @@ class _VideoPlayerPageState extends State<VideoPlayer_Page> {
       ),
     ),
   ),
-  body: Center(
-    child: FlickVideoPlayer(
-      flickManager: flickManager,
-    ),
-  ),
+  // body: Center(
+  //   child: FlickVideoPlayer(
+  //     flickManager: flickManager,
+  //   ),
+  // ),
 );
 
   }

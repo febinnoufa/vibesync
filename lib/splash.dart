@@ -1,13 +1,17 @@
-import 'package:fetch_all_videos/fetch_all_videos.dart';
+//import 'package:fetch_all_videos/fetch_all_videos.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:list_all_videos/model/video_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:vibesync/database/model/model.dart';
 import 'package:vibesync/home.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vibesync/videos/dbfunctions/addtohive.dart';
 import 'package:vibesync/videos/fetchvideo/fetchvideo.dart';
+import 'package:list_all_videos/list_all_videos.dart';
+import 'package:list_all_videos/list_all_videos.dart';
+import 'package:list_all_videos/model/video_model.dart';
 
 class Screensplash extends StatefulWidget {
   const Screensplash({Key? key}) : super(key: key);
@@ -95,7 +99,7 @@ class _ScreensplashState extends State<Screensplash> {
     await openSongsBox();
     await openVideosBox();
 
-    if (videosBox.isEmpty) {
+    if (videosBox.isEmpty||songsBox.isEmpty) {
       requestPermissions();
       //   await fetchVideos(); // Call fetchVideos here
     }
@@ -150,22 +154,30 @@ class _ScreensplashState extends State<Screensplash> {
     }
   }
 
-  Future<void> fetchVideos() async {
-    try {
-      print('Fetching videos...');
-      FetchAllVideos ob = FetchAllVideos();
-      List<dynamic> videoPaths = await ob.getAllVideos();
-      print('Fetched video paths: $videoPaths');
+Future<void> fetchVideos() async {
+  try {
+    print('Fetching videos...');
+    List<VideoDetails> videoPaths = await ListAllVideos().getAllVideosPath();
 
-      if (videoPaths.isEmpty) {
-        print('No videos found.');
-      } else {
-        addVideosToHive(videoPaths);
+    if (videoPaths.isEmpty) {
+      print('No videos found.');
+    } else {
+      List<dynamic> paths = [];
+      for (var element in videoPaths) {
+        paths.add(element.videoPath);
       }
-    } catch (e) {
-      print('Error fetching videos: $e');
+
+      // Now, 'paths' contains all the video paths from 'videoPaths'
+      print('Fetched video paths: $paths');
+
+      // Assuming addVideosToHive expects a List<dynamic>
+      addVideosToHive(paths);
     }
+  } catch (e) {
+    print('Error fetching videos: $e');
   }
+}
+
 }
 
 void showPermissionSettingsDialog(BuildContext context) {

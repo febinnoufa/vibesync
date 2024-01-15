@@ -23,6 +23,7 @@ class VideoListState extends State<Videolist> {
   @override
   void initState() {
     super.initState();
+    
     openRecentlyPlayedBox();
   }
 

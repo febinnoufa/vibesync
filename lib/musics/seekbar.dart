@@ -25,7 +25,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
   late Box<songshive> songsBox;
 
   late Box<Songfavorite> foundsongfav;
-   late StreamSubscription<Duration> _positionSubscription;
+  late StreamSubscription<Duration> _positionSubscription;
   late StreamSubscription<PlayerState> _playerStateSubscription;
 
   @override
@@ -324,7 +324,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
       });
 
       // Listen to the playback position and update the slider accordingly
-         _positionSubscription = audioPlayer.positionStream.listen((position) {
+      _positionSubscription = audioPlayer.positionStream.listen((position) {
         if (mounted) {
           setState(() {
             _currentSliderValue = position.inMilliseconds.toDouble();
@@ -333,8 +333,9 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
       });
 
       // Listen to player state changes
-   _playerStateSubscription = audioPlayer.playerStateStream.listen((playerState) async  {
-    if(mounted)
+      _playerStateSubscription =
+          audioPlayer.playerStateStream.listen((playerState) async {
+        if (mounted)
         // ignore: curly_braces_in_flow_control_structures
         if (playerState.processingState == ProcessingState.completed) {
           if (isRepeated) {
@@ -406,7 +407,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
 
   @override
   void dispose() {
-      _positionSubscription.cancel();
+    _positionSubscription.cancel();
     _playerStateSubscription.cancel();
     audioPlayer.dispose();
     super.dispose();

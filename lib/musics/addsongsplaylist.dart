@@ -1,3 +1,4 @@
+// ignore: unnecessary_import
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -9,7 +10,7 @@ class SongsAddPlaylist extends StatefulWidget {
   final Songplaylist data;
   final int id;
 
-  SongsAddPlaylist({Key? key, required this.data, required this.id}) : super(key: key);
+  const SongsAddPlaylist({Key? key, required this.data, required this.id}) : super(key: key);
 
   @override
   State<SongsAddPlaylist> createState() => _SongsAddPlaylistState();
@@ -45,7 +46,7 @@ class _SongsAddPlaylistState extends State<SongsAddPlaylist> {
         appBar: AppBar(
           // App bar details...
         ),
-        body: Center(
+        body: const Center(
           child: CircularProgressIndicator(), // Or any loading indicator
         ),
       );
@@ -104,7 +105,8 @@ class _SongsAddPlaylistState extends State<SongsAddPlaylist> {
                       itemCount: filteredSongs.length,
                       itemBuilder: (context, index) {
                         final song = filteredSongs[index];
-                        return song != null
+                                                // ignore: unnecessary_null_comparison
+                                                return song != null
                             ? Container(
                                 margin: const EdgeInsets.symmetric(vertical: 3),
                                 decoration: BoxDecoration(

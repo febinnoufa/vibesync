@@ -1,10 +1,12 @@
+import 'package:fetch_all_videos/fetch_all_videos.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:vibesync/database/model/model.dart';
 import 'package:vibesync/home.dart';
-// ignore: depend_on_referenced_packages
 import 'package:permission_handler/permission_handler.dart';
+import 'package:vibesync/videos/dbfunctions/addtohive.dart';
 import 'package:vibesync/videos/fetchvideo/fetchvideo.dart';
 
 class Screensplash extends StatefulWidget {
@@ -19,6 +21,7 @@ class _ScreensplashState extends State<Screensplash> {
   late List<SongModel> songs = [];
   late Box<songshive> songsBox;
   late Box<videohive> videosBox;
+  Widget? permissionResult;
 
   @override
   void initState() {
@@ -40,8 +43,14 @@ class _ScreensplashState extends State<Screensplash> {
   }
 
   Future<void> gotohome() async {
-    await Future.delayed(const Duration(seconds: 3));
-    // ignore: use_build_context_synchronously
+    if (permissionResult == null) {
+      // Permission is granted, show for 10 seconds
+      await Future.delayed(const Duration(seconds: 10));
+    } else {
+      // Permission is not granted, show for 3 seconds
+      await Future.delayed(const Duration(seconds: 3));
+    }
+
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (ctx) => const Homescreen(),
@@ -49,16 +58,36 @@ class _ScreensplashState extends State<Screensplash> {
     );
   }
 
+  Future<void> requestPermissions() async {
+    var status = await Permission.storage.request();
+    if (status.isGranted) {
+      // Storage permission granted, proceed with fetching videos.
+      await fetchVideos();
+      List<SongModel> fetchedSongs = await _audioQuery.querySongs(
+        sortType: SongSortType.TITLE,
+        orderType: OrderType.ASC_OR_SMALLER,
+        uriType: UriType.EXTERNAL,
+      );
 
+      for (var song in fetchedSongs) {
+        final songToSave =
+            songshive(name: song.data, artist: song.artist ?? '');
+        await songsBox.add(songToSave);
+      }
 
+      // await fetchVideos(); // Call fetchVideos here
 
-
-
-
-
-
-
-  
+      setState(() {
+        songs = fetchedSongs;
+      });
+      print('fvtyyyyyyyyyyyxdv');
+    } else {
+      await requestStoragePermission();
+      await fetchVideos();
+      print('uebwxtrgwyue');
+      // Storage permission denied, show a message or take appropriate action.
+    }
+  }
 
   // functions ************************ //
 
@@ -66,13 +95,13 @@ class _ScreensplashState extends State<Screensplash> {
     await openSongsBox();
     await openVideosBox();
 
-    if (songsBox.isEmpty) {
-      await fetchSongsAndSaveToHive();
-    }
-
     if (videosBox.isEmpty) {
-      fetchVideos();
+      requestPermissions();
+      //   await fetchVideos(); // Call fetchVideos here
     }
+    //  if (songsBox.isEmpty) {
+    //   await requestStoragePermission();
+    // }
 
     gotohome();
   }
@@ -87,24 +116,82 @@ class _ScreensplashState extends State<Screensplash> {
     setState(() {});
   }
 
-  Future<void> fetchSongsAndSaveToHive() async {
-    var status = await Permission.storage.request();
-    if (status.isGranted) {
-      List<SongModel> fetchedSongs = await _audioQuery.querySongs(
-        sortType: SongSortType.TITLE,
-        orderType: OrderType.ASC_OR_SMALLER,
-        uriType: UriType.EXTERNAL,
-      );
-
-      for (var song in fetchedSongs) {
-        final songToSave =
-            songshive(name: song.data, artist: song.artist.toString());
-        await songsBox.add(songToSave);
-      }
+  Future<void> requestStoragePermission() async {
+    if (!kIsWeb) {
+      bool permissionStatus = await _audioQuery.permissionsStatus();
 
       setState(() {
-        songs = fetchedSongs;
+        permissionResult = const Center(
+          child: CircularProgressIndicator(),
+        );
       });
-    } else {}
+
+      if (permissionStatus) {
+        List<SongModel> fetchedSongs = await _audioQuery.querySongs(
+          sortType: SongSortType.TITLE,
+          orderType: OrderType.ASC_OR_SMALLER,
+          uriType: UriType.EXTERNAL,
+        );
+
+        for (var song in fetchedSongs) {
+          final songToSave =
+              songshive(name: song.data, artist: song.artist ?? '');
+          await songsBox.add(songToSave);
+        }
+
+        // await fetchVideos(); // Call fetchVideos here
+
+        setState(() {
+          songs = fetchedSongs;
+        });
+      } else {
+        showPermissionSettingsDialog(context);
+      }
+    }
   }
+
+  Future<void> fetchVideos() async {
+    try {
+      print('Fetching videos...');
+      FetchAllVideos ob = FetchAllVideos();
+      List<dynamic> videoPaths = await ob.getAllVideos();
+      print('Fetched video paths: $videoPaths');
+
+      if (videoPaths.isEmpty) {
+        print('No videos found.');
+      } else {
+        addVideosToHive(videoPaths);
+      }
+    } catch (e) {
+      print('Error fetching videos: $e');
+    }
+  }
+}
+
+void showPermissionSettingsDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Permission Required'),
+        content: Text(
+            'Please enable storage permission in app settings to fetch songs.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+              openAppSettings(); // Open app settings
+            },
+            child: Text('Open Settings'),
+          ),
+        ],
+      );
+    },
+  );
 }

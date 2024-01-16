@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/services.dart';
@@ -18,7 +19,9 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
   double _volume = 1.0;
   bool _isFullScreen = false;
   bool _areControlsVisible = true;
+  late Timer _hideControlsTimer;
 
+  @override
   @override
   void initState() {
     super.initState();
@@ -32,12 +35,17 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     _videoController.play();
 
     // Hide controls initially
-    _startHideControlsTimer();
+    _hideControlsTimer = Timer(const Duration(seconds: 10), () {
+      setState(() {
+        _areControlsVisible = false;
+      });
+    });
   }
 
   @override
   void dispose() {
     _videoController.dispose();
+    _hideControlsTimer.cancel();
     super.dispose();
   }
 
@@ -45,14 +53,9 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GestureDetector(
-        onTap: () {
+        onTapDown: (_) {
           // Toggle visibility of controls
-          setState(() {
-            _areControlsVisible = !_areControlsVisible;
-          });
-
-          // Restart the timer to hide controls after 10 seconds
-          _startHideControlsTimer();
+          _toggleControlsVisibility();
         },
         child: Stack(
           alignment: Alignment.center,
@@ -80,84 +83,123 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     );
   }
 
-  Widget _buildMediaControls() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  void _showMoreOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(
-                icon: Icon(Icons.fullscreen_exit, color: Colors.white),
-                onPressed: () {
-                  // Rotate the video to the left (counter-clockwise)
+              ListTile(
+                leading: const Icon(Icons.rotate_left),
+                title: const Text('Rotate Left'),
+                onTap: () {
+                  Navigator.pop(context); // Close the bottom sheet
                   _rotateVideo(-90);
                 },
               ),
-              IconButton(
-                icon: Icon(Icons.replay_10, color: Colors.white),
-                onPressed: () {
-                  _videoController.seekTo(
-                    Duration(seconds: _videoController.value.position.inSeconds - 10),
-                  );
+              ListTile(
+                leading: const Icon(Icons.rotate_right),
+                title: const Text('Rotate Right'),
+                onTap: () {
+                  Navigator.pop(context); // Close the bottom sheet
+                  _rotateVideo(90);
                 },
               ),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    if (_videoController.value.isPlaying) {
-                      _videoController.pause();
-                    } else {
-                      _videoController.play();
-                    }
-                  });
-                },
-                icon: Icon(
-                  _videoController.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                  color: Colors.white,
+              // Add more options as needed
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+// Modify your _buildMediaControls method to include the more options button
+  Widget _buildMediaControls() {
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Expanded(
+                //   child: Slider(
+                //     value: _videoController.value.position.inSeconds.toDouble(),
+                //     min: 0.0,
+                //     max: _videoController.value.duration!.inSeconds.toDouble(),
+                //     onChanged: (value) {
+                //       final Duration newPosition = Duration(seconds: value.round());
+                //       _videoController.seekTo(newPosition);
+                //     },
+                //   ),
+                // ),
+              ],
+            ),
+            VideoProgressIndicator(
+              _videoController,
+              allowScrubbing: true,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.fullscreen_exit, color: Colors.white),
+                  onPressed: () {
+                    // Show more options when full-screen exit button is clicked
+                    _showMoreOptions();
+                  },
                 ),
-              ),
-              IconButton(
-                icon: Icon(Icons.forward_10, color: Colors.white),
-                onPressed: () {
-                  _videoController.seekTo(
-                    Duration(seconds: _videoController.value.position.inSeconds + 10),
-                  );
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.crop_rotate, color: Colors.white),
-                onPressed: () {
-                  // Toggle fullscreen mode
-                  _toggleFullScreen();
-                },
-              ),
-            ],
-          ),
-          SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Expanded(
-              //   child: Slider(
-              //     value: _videoController.value.position.inSeconds.toDouble(),
-              //     min: 0.0,
-              //     max: _videoController.value.duration!.inSeconds.toDouble(),
-              //     onChanged: (value) {
-              //       final Duration newPosition = Duration(seconds: value.round());
-              //       _videoController.seekTo(newPosition);
-              //     },
-              //   ),
-              // ),
-            ],
-          ),
-          SizedBox(height: 16),
-          VideoProgressIndicator(
-            _videoController,
-            allowScrubbing: true,
-          ),
-        ],
+                IconButton(
+                  icon: const Icon(Icons.replay_10, color: Colors.white),
+                  onPressed: () {
+                    _videoController.seekTo(
+                      Duration(
+                          seconds:
+                              _videoController.value.position.inSeconds - 10),
+                    );
+                  },
+                ),
+                IconButton(
+                  onPressed: () {
+                    _togglePlayPause();
+                  },
+                  icon: Icon(
+                    _videoController.value.isPlaying
+                        ? Icons.pause
+                        : Icons.play_arrow,
+                    color: Colors.white,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.forward_10, color: Colors.white),
+                  onPressed: () {
+                    _videoController.seekTo(
+                      Duration(
+                          seconds:
+                              _videoController.value.position.inSeconds + 10),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.crop_rotate, color: Colors.white),
+                  onPressed: () {
+                    // Toggle fullscreen mode
+                    _toggleFullScreen();
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
       ),
     );
   }
@@ -185,13 +227,12 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     );
 
     _videoController.play(); // Resume playing after rotation
+
+    // Restart the timer to hide controls after 10 seconds
+    _startHideControlsTimer();
   }
 
-  void _onTapVideo(TapDownDetails details) {
-    // Calculate the seek position based on tap position
-    final double position = details.localPosition.dx / MediaQuery.of(context).size.width;
-    _videoController.seekTo(Duration(seconds: (_videoController.value.duration!.inSeconds * position).round()));
-
+  void _onTapVideo() {
     // Show controls when tapping on the video
     setState(() {
       _areControlsVisible = true;
@@ -221,12 +262,38 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     }
   }
 
+  void _toggleControlsVisibility() {
+    // Toggle visibility of controls
+    setState(() {
+      _areControlsVisible = !_areControlsVisible;
+    });
+
+    // Restart the timer to hide controls after 10 seconds
+    _startHideControlsTimer();
+  }
+
   void _startHideControlsTimer() {
+    // Cancel the existing timer
+    _hideControlsTimer?.cancel();
+
     // Start a timer to hide controls after 10 seconds
-    Timer(Duration(seconds: 10), () {
+    _hideControlsTimer = Timer(const Duration(seconds: 10), () {
       setState(() {
         _areControlsVisible = false;
       });
     });
+  }
+
+  void _togglePlayPause() {
+    setState(() {
+      if (_videoController.value.isPlaying) {
+        _videoController.pause();
+      } else {
+        _videoController.play();
+      }
+    });
+
+    // Restart the timer to hide controls after 10 seconds
+    _startHideControlsTimer();
   }
 }

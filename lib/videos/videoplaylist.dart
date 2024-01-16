@@ -8,6 +8,7 @@ import 'package:vibesync/tumbnail.dart';
 import 'package:vibesync/videos/addplaylistvideo.dart';
 import 'package:vibesync/videos/dbfunctions/recentlyfunc.dart';
 import 'package:vibesync/videos/flick.dart';
+import 'package:vibesync/videos/testingvideoplayer.dart';
 
 // ignore: must_be_immutable
 class Videoplaylistpage extends StatefulWidget {
@@ -189,11 +190,22 @@ class VideoplaylistpageState extends State<Videoplaylistpage> {
                                             trailing: PopupMenuButton(
                                               itemBuilder: (context) => [
                                                 const PopupMenuItem(
+                                                  
                                                     child: Text('Play')),
                                                 PopupMenuItem(
                                                     onTap: () {
-                                                      //  toggleFavorite(context, , index);
-                                                    },
+                                            addToRecentlyPlayed(
+                                                widget.data.videos![index]);
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                   VideoPlayerPage(
+                                                  videoPath: video,
+                                                ),
+                                              ),
+                                            );
+                                          },
                                                     child: const Text(
                                                         'Add favorite')),
                                                 PopupMenuItem(
@@ -256,8 +268,8 @@ class VideoplaylistpageState extends State<Videoplaylistpage> {
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    VideoPlayer_Page(
-                                                  videoUrl: video,
+                                                   VideoPlayerPage(
+                                                  videoPath: video,
                                                 ),
                                               ),
                                             );

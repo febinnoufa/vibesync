@@ -9,6 +9,7 @@ import 'package:vibesync/videos/dbfunctions/favfunc.dart';
 import 'package:vibesync/videos/dbfunctions/recentlyfunc.dart';
 import 'package:vibesync/videos/flick.dart';
 import 'package:vibesync/videos/playlistaddlist.dart';
+import 'package:vibesync/videos/testingvideoplayer.dart';
 
 class Resentlyplayedvideo extends StatefulWidget {
   const Resentlyplayedvideo({Key? key}) : super(key: key);
@@ -82,7 +83,7 @@ class _ResentlyplayedvideoState extends State<Resentlyplayedvideo> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                VideoPlayer_Page(videoUrl: videos.name),
+                               VideoPlayerPage(videoPath: videos.name),
                           ),
                         );
                       }
@@ -149,7 +150,7 @@ class _ResentlyplayedvideoState extends State<Resentlyplayedvideo> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        VideoPlayer_Page(videoUrl: videos.name),
+                                        VideoPlayerPage(videoPath: videos.name),
                                   ),
                                 );
                               }

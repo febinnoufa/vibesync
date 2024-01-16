@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:vibesync/database/model/model.dart';
 import 'package:vibesync/tumbnail.dart';
 import 'package:vibesync/videos/flick.dart';
+import 'package:vibesync/videos/testingvideoplayer.dart';
 
 class VideohorList extends StatefulWidget {
   // ignore: use_key_in_widget_constructors
@@ -140,8 +141,8 @@ class VideohorListState extends State<VideohorList> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => VideoPlayer_Page(
-                                videoUrl: video.name,
+                              builder: (context) => VideoPlayerPage(
+                                videoPath: video.name,
                               ),
                             ),
                           );

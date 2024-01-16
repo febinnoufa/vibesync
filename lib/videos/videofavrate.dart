@@ -6,6 +6,7 @@ import 'package:vibesync/database/model/model.dart';
 import 'package:vibesync/tumbnail.dart';
 import 'package:vibesync/videos/dbfunctions/recentlyfunc.dart';
 import 'package:vibesync/videos/flick.dart';
+import 'package:vibesync/videos/testingvideoplayer.dart';
 
 class VideoFav extends StatefulWidget {
   const VideoFav({Key? key}) : super(key: key);
@@ -48,8 +49,8 @@ class VideoFavState extends State<VideoFav> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => VideoPlayer_Page(
-                              videoUrl: videoFavorite.favoritevideo),
+                          builder: (context) => VideoPlayerPage(
+                              videoPath: videoFavorite.favoritevideo),
                         ),
                       );
                     },

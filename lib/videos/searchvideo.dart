@@ -9,6 +9,7 @@ import 'package:vibesync/videos/dbfunctions/favfunc.dart';
 import 'package:vibesync/videos/dbfunctions/recentlyfunc.dart';
 import 'package:vibesync/videos/flick.dart';
 import 'package:vibesync/videos/playlistaddlist.dart';
+import 'package:vibesync/videos/testingvideoplayer.dart';
 
 class Searchvideo extends StatefulWidget {
   const Searchvideo({Key? key}) : super(key: key);
@@ -103,8 +104,8 @@ class SearchvideoState extends State<Searchvideo> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => VideoPlayer_Page(
-                                          videoUrl: video.name),
+                                      builder: (context) => VideoPlayerPage(
+                                          videoPath: video.name),
                                     ),
                                   );
                                 },
@@ -185,8 +186,8 @@ class SearchvideoState extends State<Searchvideo> {
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      VideoPlayer_Page(
-                                                          videoUrl: video.name),
+                                                      VideoPlayerPage(
+                                                          videoPath: video.name),
                                                 ),
                                               );
                                             },

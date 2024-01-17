@@ -8,10 +8,8 @@ import 'package:vibesync/database/model/model.dart';
 import 'package:vibesync/home.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vibesync/videos/dbfunctions/addtohive.dart';
-import 'package:vibesync/videos/fetchvideo/fetchvideo.dart';
 import 'package:list_all_videos/list_all_videos.dart';
-import 'package:list_all_videos/list_all_videos.dart';
-import 'package:list_all_videos/model/video_model.dart';
+
 
 class Screensplash extends StatefulWidget {
   const Screensplash({Key? key}) : super(key: key);
@@ -55,6 +53,7 @@ class _ScreensplashState extends State<Screensplash> {
       await Future.delayed(const Duration(seconds: 3));
     }
 
+    // ignore: use_build_context_synchronously
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (ctx) => const Homescreen(),
@@ -84,11 +83,9 @@ class _ScreensplashState extends State<Screensplash> {
       setState(() {
         songs = fetchedSongs;
       });
-      print('fvtyyyyyyyyyyyxdv');
     } else {
       await requestStoragePermission();
       await fetchVideos();
-      print('uebwxtrgwyue');
       // Storage permission denied, show a message or take appropriate action.
     }
   }
@@ -149,6 +146,7 @@ class _ScreensplashState extends State<Screensplash> {
           songs = fetchedSongs;
         });
       } else {
+        // ignore: use_build_context_synchronously
         showPermissionSettingsDialog(context);
       }
     }
@@ -156,11 +154,9 @@ class _ScreensplashState extends State<Screensplash> {
 
 Future<void> fetchVideos() async {
   try {
-    print('Fetching videos...');
     List<VideoDetails> videoPaths = await ListAllVideos().getAllVideosPath();
 
     if (videoPaths.isEmpty) {
-      print('No videos found.');
     } else {
       List<dynamic> paths = [];
       for (var element in videoPaths) {
@@ -168,13 +164,12 @@ Future<void> fetchVideos() async {
       }
 
       // Now, 'paths' contains all the video paths from 'videoPaths'
-      print('Fetched video paths: $paths');
 
       // Assuming addVideosToHive expects a List<dynamic>
       addVideosToHive(paths);
     }
+  // ignore: empty_catches
   } catch (e) {
-    print('Error fetching videos: $e');
   }
 }
 
@@ -185,22 +180,22 @@ void showPermissionSettingsDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Permission Required'),
-        content: Text(
+        title: const Text('Permission Required'),
+        content: const Text(
             'Please enable storage permission in app settings to fetch songs.'),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close the dialog
             },
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close the dialog
               openAppSettings(); // Open app settings
             },
-            child: Text('Open Settings'),
+            child: const Text('Open Settings'),
           ),
         ],
       );

@@ -5,7 +5,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vibesync/database/model/model.dart';
 import 'package:vibesync/tumbnail.dart';
 import 'package:vibesync/videos/dbfunctions/recentlyfunc.dart';
-import 'package:vibesync/videos/flick.dart';
 import 'package:vibesync/videos/testingvideoplayer.dart';
 
 class VideoFav extends StatefulWidget {

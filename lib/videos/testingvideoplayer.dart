@@ -10,13 +10,12 @@ class VideoPlayerPage extends StatefulWidget {
   const VideoPlayerPage({Key? key, required this.videoPath}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _VideoPlayerPageState createState() => _VideoPlayerPageState();
 }
 
 class _VideoPlayerPageState extends State<VideoPlayerPage> {
   late VideoPlayerController _videoController;
-  late Future<void> _initializeVideoPlayerFuture;
-  double _volume = 1.0;
   bool _isFullScreen = false;
   bool _areControlsVisible = true;
   late Timer _hideControlsTimer;
@@ -25,8 +24,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
   @override
   void initState() {
     super.initState();
+    // ignore: deprecated_member_use
     _videoController = VideoPlayerController.network(widget.videoPath);
-    _initializeVideoPlayerFuture = _videoController.initialize();
     _videoController.addListener(() {
       setState(() {});
     });
@@ -213,9 +212,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     _videoController.pause(); // Pause the video while rotating
 
     // Calculate the new aspect ratio after rotation
-    double newAspectRatio = _videoController.value.aspectRatio;
     if (degrees == 90 || degrees == -90) {
-      newAspectRatio = 1 / _videoController.value.aspectRatio;
     }
 
     // Update the existing controller's properties
@@ -232,15 +229,6 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     _startHideControlsTimer();
   }
 
-  void _onTapVideo() {
-    // Show controls when tapping on the video
-    setState(() {
-      _areControlsVisible = true;
-    });
-
-    // Restart the timer to hide controls after 10 seconds
-    _startHideControlsTimer();
-  }
 
   void _toggleFullScreen() {
     setState(() {
@@ -274,7 +262,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
 
   void _startHideControlsTimer() {
     // Cancel the existing timer
-    _hideControlsTimer?.cancel();
+    _hideControlsTimer.cancel();
 
     // Start a timer to hide controls after 10 seconds
     _hideControlsTimer = Timer(const Duration(seconds: 10), () {

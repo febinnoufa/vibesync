@@ -7,7 +7,6 @@ import 'package:vibesync/shareapp/sharevideo.dart';
 import 'package:vibesync/tumbnail.dart';
 import 'package:vibesync/videos/dbfunctions/favfunc.dart';
 import 'package:vibesync/videos/dbfunctions/recentlyfunc.dart';
-import 'package:vibesync/videos/flick.dart';
 import 'package:vibesync/videos/playlistaddlist.dart';
 import 'package:vibesync/videos/testingvideoplayer.dart';
 

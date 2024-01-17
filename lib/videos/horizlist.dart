@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:vibesync/database/model/model.dart';
 import 'package:vibesync/tumbnail.dart';
-import 'package:vibesync/videos/flick.dart';
 import 'package:vibesync/videos/testingvideoplayer.dart';
 
 class VideohorList extends StatefulWidget {
